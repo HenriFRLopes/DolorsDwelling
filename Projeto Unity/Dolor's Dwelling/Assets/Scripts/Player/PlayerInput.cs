@@ -26,4 +26,9 @@ public class PlayerInput : InputController
     {
         return Input.GetMouseButtonDown(0);
     }
+
+    public override bool ShieldInput()
+    {
+        return Input.GetKey(KeyCode.E);
+    }
 }

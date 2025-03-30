@@ -14,6 +14,7 @@ public abstract class Pena : MonoBehaviour
     public Transform currentAttackDir;
     public Vector2 currentAttackArea;
     public LayerMask attackableLayer;
+    public Rigidbody2D rb;
     public GameObject hitBoxDirectionVizualizer;
 
     private void OnDrawGizmos()
@@ -66,13 +67,16 @@ public abstract class Pena : MonoBehaviour
         attacking = true;
         Collider2D[] colider = Physics2D.OverlapBoxAll(currentAttackDir.position, currentAttackArea, 0, attackableLayer);
         GameObject hahahaha = Instantiate(hitBoxDirectionVizualizer, currentAttackDir.position, Quaternion.identity);
+        Destroy(hahahaha, 1f);
+
         Invoke("ResetCombo", comboTimer);
         foreach (Collider2D col in colider)
         {
-            if (col.gameObject.GetComponent<Inimigo>() != null && col.gameObject.GetComponent<Inimigo>().staggerable)
+            if (col.gameObject.GetComponent<Inimigo>() != null)
             {
                
-                col.gameObject.GetComponent<Inimigo>().rb.AddForce(transform.right * pushForce, ForceMode2D.Impulse);
+                col.gameObject.GetComponent<Inimigo>().rb.AddForce(rb.transform.right * pushForce, ForceMode2D.Impulse);
+                col.gameObject.GetComponent<Inimigo>().TomarDano(damage);
             }
 
         }

@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -7,6 +8,16 @@ public class Player : MonoBehaviour
     public InputController input;
     public Pena[] penasEquipadas;
     public bool grounded;
+    public bool canBePushed;
+    public float parryTimer;
+    public GameObject shield;
+    int shieldHits = 0;
+    bool canBlock = true;
+    bool shieldInput;
+    public float blockRecoveryTimer;
+
+    public enum BlockState { Blocking, Parrying, RecoveringBlock, None}
+    public BlockState state;
     Pena penaAtual;
     int vida = 100;
 
@@ -64,6 +75,18 @@ public class Player : MonoBehaviour
                 penaAtual.Invoke("Attack", penaAtual.delayAttackUp);
             }
         }
+
+        if(input.ShieldInput())
+        {
+            BlockInput();
+        }
+        else if(!input.ShieldInput())
+        {
+            if(state == BlockState.Blocking)
+            {
+                CancelShield();
+            }
+        }
     }
 
     public void Flip()
@@ -81,14 +104,15 @@ public class Player : MonoBehaviour
 
     public void PerderVida()
     {
-        if(vida > 20)
+        if (vida > 20)
         {
             vida -= 10;
         }
-        if(vida < 20)
+        if(vida <= 20)
         {
             vida -= 5;
         }
+        Debug.Log(vida);
     }
     public void GanharVida(int valor)
     {
@@ -98,5 +122,76 @@ public class Player : MonoBehaviour
     public void Morrer()
     {
 
+    }
+
+    void BlockInput()
+    {
+        if (state == BlockState.None)
+        {
+            if (canBlock)
+            {
+                Parry();
+                Debug.Log(state);
+            }
+        }
+    }
+
+    void Parry()
+    {
+        if (state != BlockState.None)
+        {
+            return;
+        }
+        state = BlockState.Parrying;
+        shield.GetComponent<SpriteRenderer>().color = Color.blue;
+        shield.SetActive(true);
+        Invoke("EndParry", parryTimer);
+    }
+
+    void EndParry()
+    {
+        StartShield();
+    }
+
+    void StartShield()
+    {
+        shield.GetComponent<SpriteRenderer>().color = Color.green;
+        state = BlockState.Blocking;
+        shieldHits = 0;
+    }
+
+    public void ShieldDamage()
+    {
+        if (shieldHits == 0)
+        {
+            shieldHits++;
+            shield.GetComponent<SpriteRenderer>().color = Color.red;
+        }
+        else if (shieldHits == 1)
+        {
+            EndShield();
+        }
+    }
+    void EndShield()
+    {
+        canBlock = false;
+        penaAtual.canAttack = false;
+        shield.SetActive(false);
+        state = BlockState.RecoveringBlock;
+        Invoke("RecoverBlock", blockRecoveryTimer);
+    }
+
+    void CancelShield()
+    {
+        shield.SetActive(false);
+        shieldHits = 0;
+        state = BlockState.None;
+    }
+
+    void RecoverBlock()
+    {
+        canBlock = true;
+        state = BlockState.None;
+        penaAtual.canAttack = true;
     }
 }

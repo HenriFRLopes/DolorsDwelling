@@ -8,4 +8,6 @@ public abstract class InputController : ScriptableObject
     public abstract bool JumpInput();
     public abstract bool JumpHold();
     public abstract bool MouseLeftClick();
+
+    public abstract bool ShieldInput();
 }

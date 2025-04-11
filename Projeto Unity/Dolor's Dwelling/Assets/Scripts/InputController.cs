@@ -10,4 +10,6 @@ public abstract class InputController : ScriptableObject
     public abstract bool MouseLeftClick();
 
     public abstract bool ShieldInput();
+
+    public abstract bool DashInput();
 }

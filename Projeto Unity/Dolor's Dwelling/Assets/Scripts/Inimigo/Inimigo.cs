@@ -22,7 +22,7 @@ public class Inimigo : MonoBehaviour
 
     private void Start()
     {
-        Invoke("Attack", attackBuildUp);
+        //Invoke("Attack", attackBuildUp);
     }
     public void TomarDano(int valor)
     {

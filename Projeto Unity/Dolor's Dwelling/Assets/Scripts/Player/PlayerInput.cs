@@ -5,7 +5,7 @@ public class PlayerInput : InputController
 {
     public override bool JumpInput()
     {
-        return Input.GetButtonDown("Jump");
+        return Input.GetKeyDown(KeyCode.Space);
     }
 
     public override float MoveInputX()
@@ -30,5 +30,10 @@ public class PlayerInput : InputController
     public override bool ShieldInput()
     {
         return Input.GetKey(KeyCode.E);
+    }
+
+    public override bool DashInput()
+    {
+        return Input.GetKeyDown(KeyCode.LeftShift);
     }
 }

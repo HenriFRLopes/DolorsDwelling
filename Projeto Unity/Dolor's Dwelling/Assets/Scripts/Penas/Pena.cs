@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public abstract class Pena : MonoBehaviour
@@ -59,6 +60,8 @@ public abstract class Pena : MonoBehaviour
                 Debug.Log("Ataque3");
                 buffered = true;
                 Invoke("Attack", delayAttack3);
+                StartCoroutine(BulletTime());
+                Time.timeScale = 0;
                 CancelInvoke("ResetCombo");
             }
             return;
@@ -89,4 +92,12 @@ public abstract class Pena : MonoBehaviour
     }
 
     public abstract void ExtraEffect();
+
+    IEnumerator BulletTime()
+    {
+        yield return new WaitForSecondsRealtime(0.5f);
+        Debug.Log(Time.timeScale);
+        Time.timeScale = 1f;
+
+    }
 }

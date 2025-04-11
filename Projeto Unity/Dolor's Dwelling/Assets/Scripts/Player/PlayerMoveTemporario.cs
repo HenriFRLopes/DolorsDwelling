@@ -3,51 +3,70 @@ using UnityEngine;
 public class PlayerMoveTemporario : MonoBehaviour
 {
     public InputController input = null;
-    bool grounded = false;
+    public bool canMove;
+    public  bool grounded = false;
     bool canDoubleJump = false;
+    bool canDash = true;
     Vector2 velocity, direction, desiredVelocity;
     Rigidbody2D rb;
     float maxSpeedChange, acceleration;
     float friction;
-    bool wantToJump;
+    public bool wantToJump;
     float tempoExtraTimer;
     bool pulando;
-    float bufferTimer;
+    public float bufferTimer;
 
 
-    [Header("Valores publicos de movimenta��o")]
+    [Header("Valores publicos de movimentacao")]
 
+
+    [Header("Pulo e Pulo Duplo")]
     public float jumpStrength;
     public float jumpHeight;
     public float regularGravity;
     public float currentGravity;
     public float doubleJumpStrength;
     public float maxJumpVelocity;
-    public float tempoExtraPulo = 0.2f; //Tipo Looney Tunes
+    public float tempoExtraPulo = 0.2f; //Coyote time
     public float buffer;
 
-
+    [Header("Movimentacao Horizontal")]
     public float maxAirAcceleration;
     public float maxSpeed;
     public float maxAcceleration;
 
+    [Header("Paredes!")]
+    public float wallDrag; // Nao Feito Ainda
 
-    public float wallDrag; // N�o Feito Ainda
+    [Header("Glide")]
+    public float glideFallSpeed;
 
-    [Header("Camadas")]
-    //Para IFRAMES\\ N�o Implementado
-    public LayerMask layerNormal;
-    public LayerMask invencibilidade;
+    [Header("Dash")]
+    public float dashRecoveryTimer;
+    public float dashDistance;
+    [Range(0.1f, 1f)]
+    public float invencibilityDuration;
+    [Range(0.1f, 1f)]
+    public float dashDuration;
 
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         currentGravity = regularGravity;
+        canMove = true;
     }
 
     private void Update()
     {
+        if(!canMove)
+        {
+            return;
+        }
+        if(input.DashInput())
+        {
+            Dash();
+        }
         direction.x = input.MoveInputX();
         desiredVelocity = new Vector2(direction.x, 0) * Mathf.Max(maxSpeed - friction, 0);
         wantToJump |= input.JumpInput();
@@ -55,6 +74,8 @@ public class PlayerMoveTemporario : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!canMove)
+            return;
         velocity = rb.linearVelocity;
         if (wantToJump)
         {
@@ -86,7 +107,12 @@ public class PlayerMoveTemporario : MonoBehaviour
             }
         }
 
-        else if (!input.JumpHold() || rb.linearVelocity.y < 0)
+        else if(input.JumpHold() && rb.linearVelocity.y < 0)
+        {
+            rb.gravityScale = glideFallSpeed;
+        }
+
+        else if (!input.JumpHold() || rb.linearVelocity.y < 0 && !grounded)
         {
             rb.gravityScale = currentGravity;
         }
@@ -183,6 +209,38 @@ public class PlayerMoveTemporario : MonoBehaviour
             bufferTimer = 0;
             canDoubleJump = false;
         }
+    }
+
+    void Dash()
+    {
+        if(canDash)
+        {
+            rb.constraints = RigidbodyConstraints2D.FreezePositionY;
+            canMove = false;
+            canDash = false;
+            this.gameObject.layer = LayerMask.NameToLayer("Invencivel");
+            Invoke("EndIFrames", invencibilityDuration);
+            Invoke("EndDash", dashDuration);
+
+            rb.linearVelocityX += dashDistance * transform.localScale.x;
+        }
+    }
+
+    void EndDash()
+    {
+        canMove = true;
+        rb.constraints = RigidbodyConstraints2D.None;
+        Invoke("RecoverDash", dashRecoveryTimer);
+    }
+
+    void EndIFrames()
+    {
+        this.gameObject.layer = LayerMask.NameToLayer("Player");
+    }
+
+    void RecoverDash()
+    {
+        canDash = true;
     }
 
 }

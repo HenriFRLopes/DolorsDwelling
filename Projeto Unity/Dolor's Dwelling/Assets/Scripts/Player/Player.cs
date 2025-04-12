@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -104,6 +105,11 @@ public class Player : MonoBehaviour
                 CancelShield();
             }
         }
+
+        if (Input.GetKeyDown(KeyCode.Q))
+            Application.Quit();
+        if (Input.GetKeyDown(KeyCode.R))
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void Flip()
@@ -143,12 +149,13 @@ public class Player : MonoBehaviour
 
     void BlockInput()
     {
-        if (state == BlockState.None)
+        if (state == BlockState.None && grounded)
         {
             if (canBlock)
             {
                 Parry();
                 Debug.Log(state);
+                movement.canMove = false;
             }
         }
     }
@@ -196,6 +203,7 @@ public class Player : MonoBehaviour
         shield.SetActive(false);
         state = BlockState.RecoveringBlock;
         Invoke("RecoverBlock", blockRecoveryTimer);
+        Invoke("ReturnMovement", blockRecoveryTimer / 2);
     }
 
     void CancelShield()
@@ -203,6 +211,7 @@ public class Player : MonoBehaviour
         shield.SetActive(false);
         shieldHits = 0;
         state = BlockState.None;
+        ReturnMovement();
     }
 
     void RecoverBlock()

@@ -22,7 +22,7 @@ public class Inimigo : MonoBehaviour
 
     private void Start()
     {
-        //Invoke("Attack", attackBuildUp);
+        Invoke("Attack", attackBuildUp);
     }
     public void TomarDano(int valor)
     {
@@ -53,7 +53,7 @@ public class Inimigo : MonoBehaviour
 
         Collider2D[] colider = Physics2D.OverlapBoxAll(attackDir.position, attackArea, 0);
         GameObject hahahaha = Instantiate(hitBoxDirectionVizualizer, attackDir.position, Quaternion.identity);
-        Destroy(hahahaha, 1f);
+        Destroy(hahahaha, 0.1f);
         foreach (Collider2D col in colider)
         {
             if (col.gameObject.GetComponent<Player>() != null)

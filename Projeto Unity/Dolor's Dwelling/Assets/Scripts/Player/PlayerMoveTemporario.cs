@@ -204,7 +204,14 @@ public class PlayerMoveTemporario : MonoBehaviour
         else if (pulando && canDoubleJump)
         {
             float jumpForce = Mathf.Sqrt(-2f * Physics2D.gravity.y * doubleJumpStrength);
-            jumpForce = Mathf.Max(jumpForce, velocity.y, 0);
+            if(rb.linearVelocityY < 0)
+            {
+                jumpForce = Mathf.Max(jumpForce * 2 + currentGravity, velocity.y, 0);
+            }
+            else
+            {
+                 jumpForce = Mathf.Max(jumpForce, velocity.y, 0);
+            }
             velocity.y += jumpForce;
             bufferTimer = 0;
             canDoubleJump = false;
@@ -228,6 +235,7 @@ public class PlayerMoveTemporario : MonoBehaviour
 
     void EndDash()
     {
+        rb.linearVelocityX = 0;
         canMove = true;
         rb.constraints = RigidbodyConstraints2D.None;
         Invoke("RecoverDash", dashRecoveryTimer);

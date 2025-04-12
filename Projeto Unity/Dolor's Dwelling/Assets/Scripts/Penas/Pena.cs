@@ -70,7 +70,7 @@ public abstract class Pena : MonoBehaviour
         attacking = true;
         Collider2D[] colider = Physics2D.OverlapBoxAll(currentAttackDir.position, currentAttackArea, 0, attackableLayer);
         GameObject hahahaha = Instantiate(hitBoxDirectionVizualizer, currentAttackDir.position, Quaternion.identity);
-        Destroy(hahahaha, 1f);
+        Destroy(hahahaha, 0.1f);
 
         Invoke("ResetCombo", comboTimer);
         foreach (Collider2D col in colider)

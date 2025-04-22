@@ -11,5 +11,7 @@ public abstract class InputController : ScriptableObject
 
     public abstract bool ShieldInput();
 
+    public abstract bool GliderInput();
+
     public abstract bool DashInput();
 }

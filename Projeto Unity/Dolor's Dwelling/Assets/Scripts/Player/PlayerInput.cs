@@ -36,4 +36,9 @@ public class PlayerInput : InputController
     {
         return Input.GetKeyDown(KeyCode.LeftShift);
     }
+
+    public override bool GliderInput()
+    {
+        return Input.GetKey(KeyCode.LeftControl);
+    }
 }

@@ -1,20 +1,29 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMoveTemporario : MonoBehaviour
 {
     public InputController input = null;
+
+    [Header("Estados do Movimento")]
     public bool canMove;
     public  bool grounded = false;
-    bool canDoubleJump = false;
+    public bool walled = false;
+    public bool canDoubleJump = false;
     bool canDash = true;
+    public bool pulando;
+    bool gliding;
+    public bool doubleJumping;
+   public bool canJump;
+
     Vector2 velocity, direction, desiredVelocity;
     Rigidbody2D rb;
     float maxSpeedChange, acceleration;
     float friction;
-    public bool wantToJump;
     float tempoExtraTimer;
-    bool pulando;
+    public bool wantToJump;
     public float bufferTimer;
+    Vector2 contactDir;
 
 
     [Header("Valores publicos de movimentacao")]
@@ -27,7 +36,7 @@ public class PlayerMoveTemporario : MonoBehaviour
     public float currentGravity;
     public float doubleJumpStrength;
     public float maxJumpVelocity;
-    public float tempoExtraPulo = 0.2f; //Coyote time
+    public float tempoExtraPulo = 0.2f;
     public float buffer;
 
     [Header("Movimentacao Horizontal")]
@@ -36,7 +45,11 @@ public class PlayerMoveTemporario : MonoBehaviour
     public float maxAcceleration;
 
     [Header("Paredes!")]
-    public float wallDrag; // Nao Feito Ainda
+    public float maxWallDragSpeed;
+    bool wallJumping;
+    public Vector2 wallJumpStrength = new Vector2(10.7f, 10f);
+    float wallDirX;
+
 
     [Header("Glide")]
     public float glideFallSpeed;
@@ -69,7 +82,25 @@ public class PlayerMoveTemporario : MonoBehaviour
         }
         direction.x = input.MoveInputX();
         desiredVelocity = new Vector2(direction.x, 0) * Mathf.Max(maxSpeed - friction, 0);
+        gliding |= input.GliderInput();
         wantToJump |= input.JumpInput();
+
+        if (input.JumpHold() && rb.linearVelocity.y > 0 && !doubleJumping && canJump)
+        {
+            rb.gravityScale = jumpStrength;
+
+            if (rb.linearVelocity.y > maxJumpVelocity)
+            {
+                velocity.y = maxJumpVelocity - 2;
+                canJump = false;
+            }
+        }
+
+        else if (!input.JumpHold() || rb.linearVelocity.y < 0 && !grounded && !gliding && !walled)
+        {
+            canJump = false;
+            rb.gravityScale = currentGravity;
+        }
     }
 
     private void FixedUpdate()
@@ -90,31 +121,28 @@ public class PlayerMoveTemporario : MonoBehaviour
 
         if (bufferTimer > 0)
         {
-            Jump();
+            if(walled && input.MoveInputX() == -contactDir.x && !grounded)
+            {
+                WallJump();
+            }
+            else if(walled && input.MoveInputX() != -contactDir.x)
+            {
+                Jump();
+            }
+            else
+            {
+                Jump();
+            }
         }
 
         acceleration = grounded ? maxAcceleration : maxAirAcceleration;
         maxSpeedChange = acceleration * Time.deltaTime;
         velocity.x = Mathf.MoveTowards(velocity.x, desiredVelocity.x, maxSpeedChange);
 
-        if (input.JumpHold() && rb.linearVelocity.y > 0)
-        {
-            rb.gravityScale = jumpStrength;
 
-            if (rb.linearVelocity.y > maxJumpVelocity)
-            {
-                velocity.y = maxJumpVelocity - 2;
-            }
-        }
-
-        else if(input.JumpHold() && rb.linearVelocity.y < 0)
+        if(input.GliderInput() && rb.linearVelocity.y < 0)
         {
             rb.gravityScale = glideFallSpeed;
-        }
-
-        else if (!input.JumpHold() || rb.linearVelocity.y < 0 && !grounded)
-        {
-            rb.gravityScale = currentGravity;
         }
 
         else if (rb.linearVelocity.y == 0)
@@ -125,6 +153,7 @@ public class PlayerMoveTemporario : MonoBehaviour
 
         if (grounded && rb.linearVelocity.y == 0)
         {
+            canJump = true;
             tempoExtraTimer = tempoExtraPulo;
             pulando = false;
         }
@@ -134,46 +163,77 @@ public class PlayerMoveTemporario : MonoBehaviour
             tempoExtraTimer -= Time.deltaTime;
         }
 
+        #region Wall Movement
+
+        if(walled && input.MoveInputX() == - contactDir.x)
+        {
+            if(velocity.y < -maxWallDragSpeed)
+            {
+                velocity.y = -maxWallDragSpeed;
+            }
+            wallDirX = contactDir.x;
+        }
+
+        if(grounded || walled && velocity.x == 0)
+        {
+            wallJumping = false;
+        }
+
+        #endregion
+
+
         rb.linearVelocity = velocity;
+
     }
 
 
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        CheckGround(collision);
+        CheckCollision(collision);
         CheckFriction(collision);
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        CheckGround(collision);
+        CheckCollision(collision);
         CheckFriction(collision);
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
         friction = 0;
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            grounded = false;
-            Player.instance.grounded = false;
-        }
+        grounded = false;
+        walled = false;
+        canDoubleJump = true;
+        Player.instance.grounded = false;
+        Player.instance.walled = false;
     }
 
 
 
-    void CheckGround(Collision2D col)
+    void CheckCollision(Collision2D col)
     {
         for (int i = 0; i < col.contactCount; i++)
         {
-            if (col.gameObject.CompareTag("Ground"))
-            {
-                grounded = true;
-                Player.instance.grounded = true;
-                canDoubleJump = true;
-                return;
-            }
+
+            contactDir = col.GetContact(i).normal;
+            grounded |= contactDir.y >= 0.9f;
+            walled |= Mathf.Abs(contactDir.x) >= 0.9f;
+        }
+        if (grounded)
+        {
+            Player.instance.grounded = true;
+            pulando = false;
+            doubleJumping = false;
+            canDoubleJump = true;
+        }
+        if(walled)
+        {
+            Player.instance.walled = true;
+            pulando = false;
+            doubleJumping = false;
+            canDash = true;
         }
     }
 
@@ -191,30 +251,33 @@ public class PlayerMoveTemporario : MonoBehaviour
 
     void Jump()
     {
-        if (tempoExtraTimer > 0)
+        if (!doubleJumping)
         {
-            float jumpForce = Mathf.Sqrt(-2f * Physics2D.gravity.y * jumpHeight);
-            jumpForce = Mathf.Max(jumpForce, velocity.y, 0);
-            velocity.y += jumpForce;
-            bufferTimer = 0;
-            pulando = true;
-            grounded = false;
-            Player.instance.grounded = false;
-        }
-        else if (pulando && canDoubleJump)
-        {
-            float jumpForce = Mathf.Sqrt(-2f * Physics2D.gravity.y * doubleJumpStrength);
-            if(rb.linearVelocityY < 0)
+            if (tempoExtraTimer > 0)
             {
-                jumpForce = Mathf.Max(jumpForce * 2 + currentGravity, velocity.y, 0);
+                float jumpForce = Mathf.Sqrt(-2f * Physics2D.gravity.y * jumpHeight);
+                jumpForce = Mathf.Max(jumpForce, velocity.y, 0);
+                velocity.y += jumpForce;
+                bufferTimer = 0;
+                pulando = true;
+                grounded = false;
+                Player.instance.grounded = false;
             }
-            else
+            else if (!grounded && !walled && canDoubleJump || !grounded && walled && input.MoveInputX() != -contactDir.x && canDoubleJump)
             {
-                 jumpForce = Mathf.Max(jumpForce, velocity.y, 0);
+                canJump = false;
+                rb.gravityScale = 0;
+                doubleJumping = true;
+                float jumpForce = Mathf.Sqrt(2f * doubleJumpStrength);
+                if(rb.linearVelocityY < 0)
+                {
+                    jumpForce -= rb.linearVelocityY;
+                }
+                velocity.y += jumpForce;
+                bufferTimer = 0;
+                rb.gravityScale = regularGravity;
+                canDoubleJump = false;
             }
-            velocity.y += jumpForce;
-            bufferTimer = 0;
-            canDoubleJump = false;
         }
     }
 
@@ -223,6 +286,7 @@ public class PlayerMoveTemporario : MonoBehaviour
         if(canDash)
         {
             rb.constraints = RigidbodyConstraints2D.FreezePositionY;
+            rb.freezeRotation = true;
             canMove = false;
             canDash = false;
             this.gameObject.layer = LayerMask.NameToLayer("Invencivel");
@@ -237,7 +301,7 @@ public class PlayerMoveTemporario : MonoBehaviour
     {
         rb.linearVelocityX = 0;
         canMove = true;
-        rb.constraints = RigidbodyConstraints2D.None;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         Invoke("RecoverDash", dashRecoveryTimer);
     }
 
@@ -249,6 +313,14 @@ public class PlayerMoveTemporario : MonoBehaviour
     void RecoverDash()
     {
         canDash = true;
+    }
+
+    void WallJump()
+    {
+        bufferTimer = 0;
+        velocity = new Vector2(wallJumpStrength.x * wallDirX, wallJumpStrength.y);
+        wallJumping = true;
+        canDoubleJump = true;
     }
 
 }

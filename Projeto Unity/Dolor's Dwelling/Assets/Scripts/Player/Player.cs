@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     public InputController input;
     public Pena[] penasEquipadas;
     public PlayerMoveTemporario movement;
-    public bool grounded;
+    public bool grounded, walled;
     public bool canBePushed;
     public float parryTimer;
     public GameObject shield;
@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     bool canBlock = true;
     bool shieldInput;
     public float blockRecoveryTimer;
+    Rigidbody2D rb;
 
     public enum BlockState { Blocking, Parrying, RecoveringBlock, None}
     public BlockState state;
@@ -39,6 +40,8 @@ public class Player : MonoBehaviour
         {
             instance = this;
         }
+
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void Update()
@@ -57,7 +60,7 @@ public class Player : MonoBehaviour
                 penaAtual.currentAttackDir = penaAtual.attackSide;
                 if(penaAtual.comboCount == 0)
                 {
-                    movement.canMove = false;
+                    //Coisa de Animação
                     Invoke("ReturnMovement", penaAtual.delayAttack1);
                     penaAtual.Invoke("Attack", penaAtual.delayAttack1);
                 }
@@ -65,11 +68,13 @@ public class Player : MonoBehaviour
                 {
                     if(penaAtual.comboCount == 1)
                     {
-                        movement.canMove = false;
+                        //Coisa de Animação
                         Invoke("ReturnMovement", penaAtual.delayAttack2);
                     }
                     else
                     {
+                        //Coisa de Animação
+
                         movement.canMove = false;
                         Invoke("ReturnMovement", penaAtual.delayAttack3);
                     }
@@ -156,6 +161,7 @@ public class Player : MonoBehaviour
                 Parry();
                 Debug.Log(state);
                 movement.canMove = false;
+                rb.linearVelocity = Vector2.zero;
             }
         }
     }

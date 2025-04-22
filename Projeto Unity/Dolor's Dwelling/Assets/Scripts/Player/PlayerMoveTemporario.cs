@@ -180,7 +180,14 @@ public class PlayerMoveTemporario : MonoBehaviour
         }
 
         #endregion
-
+        if(velocity.x != 0 && grounded)
+        {
+            Player.instance.anim.SetBool("Running", true);
+        }
+        else
+        {
+            Player.instance.anim.SetBool("Running", false);
+        }
 
         rb.linearVelocity = velocity;
 

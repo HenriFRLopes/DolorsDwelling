@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     bool shieldInput;
     public float blockRecoveryTimer;
     Rigidbody2D rb;
+    public Animator anim;
 
     public enum BlockState { Blocking, Parrying, RecoveringBlock, None}
     public BlockState state;

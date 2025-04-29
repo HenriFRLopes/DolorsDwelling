@@ -11,6 +11,33 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Medula/Sala1.unity
+    guid: d8f087a14e957bf4193c2a8529e3e83b
+  - enabled: 1
+    path: Assets/Scenes/Medula/Sala2.unity
+    guid: d48f09439443e9b47b2711ab6cbbe387
+  - enabled: 1
+    path: Assets/Scenes/Medula/Sala3.unity
+    guid: 904c54150e6a06e4fac0352d75c6eec5
+  - enabled: 1
+    path: Assets/Scenes/Medula/Sala4.unity
+    guid: 1a454ace9e8e03d42a62cecdc9e43bf3
+  - enabled: 1
+    path: Assets/Scenes/Medula/Sala5.unity
+    guid: ab030ec23a9d05b4886c15829e2b5802
+  - enabled: 1
+    path: Assets/Scenes/Medula/Sala6.unity
+    guid: b986b383e00066d45a12ce2e949ae752
+  - enabled: 1
+    path: Assets/Scenes/Medula/Sala7.unity
+    guid: 64e4bbb5efb10ed4d807e4e9bdc825c2
+  - enabled: 1
+    path: Assets/Scenes/Medula/Sala8.unity
+    guid: c09d45d384b4e4643b93326ef576c398
+  - enabled: 1
+    path: Assets/Scenes/Medula/Sala9.unity
+    guid: 94b552e22629e8a4fbe19606c4bd9eba
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

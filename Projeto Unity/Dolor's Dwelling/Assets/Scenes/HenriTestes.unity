@@ -2030,6 +2030,7 @@ MonoBehaviour:
   shield: {fileID: 1044814142}
   blockRecoveryTimer: 5
   anim: {fileID: 2034665212}
+  shieldHealTime: 0
   state: 3
   papeis: 3
   tiro: {fileID: 0}
@@ -2074,6 +2075,8 @@ MonoBehaviour:
   pulando: 0
   doubleJumping: 0
   canJump: 0
+  onWall: 0
+  slowed: 0
   wantToJump: 0
   bufferTimer: 0
   jumpStrength: 1.2
@@ -2082,16 +2085,16 @@ MonoBehaviour:
   currentGravity: 8
   doubleJumpStrength: 200
   maxJumpVelocity: 10
-  tempoExtraPulo: 0.2
+  tempoExtraPulo: 0.5
   buffer: 0.05
   maxAirAcceleration: 40
   maxSpeed: 5
   maxAcceleration: 45
   maxWallDragSpeed: 2
   wallJumpStrength: {x: 15, y: 18}
-  glideFallSpeed: 0.5
+  glideFallSpeed: 0.3
   dashRecoveryTimer: 0.5
-  dashDistance: 30
+  dashDistance: 20
   invencibilityDuration: 0.4
   dashDuration: 0.2
 --- !u!50 &835005658

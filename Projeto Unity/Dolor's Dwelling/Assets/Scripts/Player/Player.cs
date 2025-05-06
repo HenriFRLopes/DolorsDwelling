@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
     public float blockRecoveryTimer;
     Rigidbody2D rb;
     public Animator anim;
+    public float shieldHealTime;
 
     public enum BlockState { Blocking, Parrying, RecoveringBlock, None}
     public BlockState state;
@@ -48,12 +49,11 @@ public class Player : MonoBehaviour
     void Update()
     {
         CheckInput();
-        Flip();
     }
 
     void CheckInput()
     {
-        if(input.MouseLeftClick())
+        if(input.MouseLeftClick() && penaAtual.canAttack)
         {
             if (input.MoveInputY() <= 0 && grounded || input.MoveInputY() == 0)
             {
@@ -112,23 +112,27 @@ public class Player : MonoBehaviour
             }
         }
 
+        if (input.MoveInputX() < 0)
+        {
+            Flip(-1);
+        }
+
+        if (input.MoveInputX() > 0)
+        {
+            Flip(1);
+        }
+
         if (Input.GetKeyDown(KeyCode.Q))
             Application.Quit();
         if (Input.GetKeyDown(KeyCode.R))
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void Flip()
+    public void Flip(float i)
     {
-        if(input.MoveInputX() < 0)
-        {
-            transform.localScale = new Vector2(-1, transform.localScale.y);
-        }
-        if(input.MoveInputX() > 0)
-        {
-            transform.localScale = new Vector2(1, transform.localScale.y);
 
-        }
+        transform.localScale = new Vector2(i, transform.localScale.y);
+ 
     }
 
     public void PerderVida()
@@ -161,7 +165,8 @@ public class Player : MonoBehaviour
             {
                 Parry();
                 Debug.Log(state);
-                movement.canMove = false;
+                movement.slowed = true;
+                penaAtual.canAttack = false;
                 rb.linearVelocity = Vector2.zero;
             }
         }
@@ -173,6 +178,7 @@ public class Player : MonoBehaviour
         {
             return;
         }
+        movement.slowed = true;
         state = BlockState.Parrying;
         shield.GetComponent<SpriteRenderer>().color = Color.blue;
         shield.SetActive(true);
@@ -181,14 +187,21 @@ public class Player : MonoBehaviour
 
     void EndParry()
     {
-        StartShield();
+        if (input.ShieldInput())
+        {
+            StartShield();
+        }
+        else
+        {
+            CancelShield();
+        }
     }
 
     void StartShield()
     {
         shield.GetComponent<SpriteRenderer>().color = Color.green;
         state = BlockState.Blocking;
-        shieldHits = 0;
+        penaAtual.canAttack = false;
     }
 
     public void ShieldDamage()
@@ -211,14 +224,17 @@ public class Player : MonoBehaviour
         state = BlockState.RecoveringBlock;
         Invoke("RecoverBlock", blockRecoveryTimer);
         Invoke("ReturnMovement", blockRecoveryTimer / 2);
+        Invoke("HealShield", shieldHealTime);
     }
 
-    void CancelShield()
+    public void CancelShield()
     {
         shield.SetActive(false);
+        penaAtual.canAttack = true;
         shieldHits = 0;
         state = BlockState.None;
         ReturnMovement();
+        Invoke("HealShield", shieldHealTime);
     }
 
     void RecoverBlock()
@@ -231,5 +247,12 @@ public class Player : MonoBehaviour
     void ReturnMovement()
     {
         movement.canMove = true;
+        movement.slowed = false;
+
+    }
+
+    void HealShield()
+    {
+        shieldHits = 0;
     }
 }

@@ -8,17 +8,21 @@ public class move_test_level : MonoBehaviour
 
     private Vector2 dir;
     private Rigidbody2D rig;
+    private GameplayState game_state;
 
     void Start()
     {
         dir = new Vector2(0, 0);
         rig = GetComponent<Rigidbody2D>();
+        game_state = GameObject.FindGameObjectWithTag("GameControl").GetComponent<GameplayState>();
     }
 
     void Update()
     {
-        move();
-        transform.Translate(dir * Time.deltaTime);
+        if(!game_state.gameplay_state){
+            move();
+            transform.Translate(dir * Time.deltaTime);
+        }
     }
 
     private void move(){

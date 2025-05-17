@@ -555,7 +555,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 253293138556550186, guid: bee8cf3e59615059ebb7e9894233c43e, type: 3}
       propertyPath: m_Text
-      value: "OP\xC7\xC3O 2\n"
+      value: "OP\xC7\xC3O 2"
       objectReference: {fileID: 0}
     - target: {fileID: 553514461970282240, guid: bee8cf3e59615059ebb7e9894233c43e, type: 3}
       propertyPath: arrow
@@ -2563,11 +2563,6 @@ Transform:
   - {fileID: 2075430725}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1551104033 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6644603955247314983, guid: bee8cf3e59615059ebb7e9894233c43e, type: 3}
-  m_PrefabInstance: {fileID: 3181624581064652276}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1809476599
 GameObject:
   m_ObjectHideFlags: 0
@@ -2729,7 +2724,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4783936799645795649, guid: bee8cf3e59615059ebb7e9894233c43e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.11120033
+      value: -0.111198425
       objectReference: {fileID: 0}
     - target: {fileID: 4783936799645795649, guid: bee8cf3e59615059ebb7e9894233c43e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -3034,10 +3029,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 709398466}
     m_Modifications:
-    - target: {fileID: 553514461970282240, guid: bee8cf3e59615059ebb7e9894233c43e, type: 3}
-      propertyPath: arrow
-      value: 
-      objectReference: {fileID: 1551104033}
     - target: {fileID: 4783936799645795649, guid: bee8cf3e59615059ebb7e9894233c43e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

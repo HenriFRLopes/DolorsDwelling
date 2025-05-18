@@ -2,6 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class Player : MonoBehaviour
     public Animator anim;
     public float shieldHealTime;
 
+    public enum PlayerState { Normal, Dialoguing};
+    public PlayerState currentState;
     public enum BlockState { Blocking, Parrying, RecoveringBlock, None}
     public BlockState state;
     Pena penaAtual;
@@ -53,6 +56,9 @@ public class Player : MonoBehaviour
 
     void CheckInput()
     {
+
+
+
         if(input.MouseLeftClick() && penaAtual.canAttack)
         {
             if (input.MoveInputY() <= 0 && grounded || input.MoveInputY() == 0)
@@ -254,5 +260,23 @@ public class Player : MonoBehaviour
     void HealShield()
     {
         shieldHits = 0;
+    }
+
+    public void InDialogue(bool isIn)
+    {
+        rb.linearVelocityX = 0;
+        if (isIn)
+        {
+            penaAtual.canAttack = false;
+            canBlock = false;
+            movement.enabled = false;
+        }
+        else
+        {
+            penaAtual.canAttack = true;
+            canBlock = true;
+            movement.enabled = true;
+
+        }
     }
 }

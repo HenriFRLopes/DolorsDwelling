@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1483116341854506520}
   - component: {fileID: 5726474300592689478}
   - component: {fileID: 8836494864783341633}
-  - component: {fileID: 701152902514044809}
+  - component: {fileID: 7691458080445236931}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -104,8 +104,8 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_AngularDamping: 0
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -115,7 +115,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!61 &8836494864783341633
 BoxCollider2D:
@@ -163,7 +163,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &701152902514044809
+--- !u!114 &7691458080445236931
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -172,8 +172,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 778990991034548041}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cdda69a9df21ea47a012f093f9c4845, type: 3}
+  m_Script: {fileID: 11500000, guid: 92957625a2ea93f40ba94b4fbac3d5bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tmp_dash_time: {fileID: 0}
   speed: 10
-  jump: 400
+  speed_on_air: 10
+  inertial_force: 10
+  break_force: 10
+  dash_force: 30
+  dash_sustain: 0.1
+  cooldown_dash: 1
+  jump_force: 10
+  jump_sustain: 0.2
+  gravity_scale: 70
+  max_velocity_falling: 50
+  coyote_time: 0.2
+  force_on_wall: 3
+  impulse_on_wall: 10
+  max_velocity_falling_on_wall: 5
+  size_box_down: {x: 1, y: 0.1}
+  box_down_distance: 1.1
+  ground_layer:
+    serializedVersion: 2
+    m_Bits: 512
+  size_box_left: {x: 0.1, y: 1.8}
+  box_left_distance: 0.6
+  size_box_right: {x: 0.1, y: 1.8}
+  box_right_distance: 0.6
+  obj_on_left: 0
+  obj_on_right: 0

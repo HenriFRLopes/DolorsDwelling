@@ -103,7 +103,7 @@ public class PlayerMoveBasics : MonoBehaviour
         if(Mathf.Abs(rb.linearVelocityX) < speed && Mathf.Abs(dir) == 1){
             rb.linearVelocityX += dir * speed * inertial_force * Time.deltaTime;
         }
-        if(Mathf.Abs(rb.linearVelocityX) > speed && Mathf.Abs(dir) == 1){
+        if(Mathf.Abs(rb.linearVelocityX) > speed && Mathf.Abs(dir) == 1 && on_ground){
             rb.linearVelocityX = dir * speed;
         }
 
@@ -150,8 +150,8 @@ public class PlayerMoveBasics : MonoBehaviour
             time_jump = 0;
             jump_key_press = true;
             is_dashing = false;
-            rb.linearVelocityX = 0;
             if(on_wall){
+                rb.linearVelocityX = 0; //mudei aqui, só pra lembrar
                 was_on_wall = true;
                 dir_jump = dir;
             }else was_on_wall = false;

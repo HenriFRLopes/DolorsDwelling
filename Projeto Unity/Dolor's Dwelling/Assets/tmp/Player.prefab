@@ -183,7 +183,7 @@ MonoBehaviour:
   force_on_wall: 3
   impulse_on_wall: 10
   max_velocity_falling_on_wall: 5
-  size_box_down: {x: 1, y: 0.1}
+  size_box_down: {x: 0.8, y: 0.1}
   box_down_distance: 1.1
   ground_layer:
     serializedVersion: 2
@@ -192,6 +192,7 @@ MonoBehaviour:
   box_left_distance: 0.55
   size_box_right: {x: 0.05, y: 1.8}
   box_right_distance: 0.55
+  on_ground: 0
 --- !u!1 &6392420266852335872
 GameObject:
   m_ObjectHideFlags: 0

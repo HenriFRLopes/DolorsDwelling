@@ -46,8 +46,8 @@ public class PlayerMoveBasics : MonoBehaviour
     private bool is_dashing;
     private float time_dash;
     private bool on_wall;
-    public bool obj_on_left;
-    public bool obj_on_right;
+    private bool obj_on_left;
+    private bool obj_on_right;
     private bool was_on_wall;
     private int dir_jump;
 
@@ -143,7 +143,7 @@ public class PlayerMoveBasics : MonoBehaviour
             buffer_jump = true;
         }
 
-        if((buffer_jump || Input.GetKeyDown(KeyCode.Space)) && can_jump){
+        if((buffer_jump || Input.GetKeyDown(KeyCode.Space)) && can_jump && !Input.GetKey("s")){ //temporario esse getkey("s")
             count_jump++;
             is_jumping = true;
             buffer_jump = false;
@@ -212,6 +212,8 @@ public class PlayerMoveBasics : MonoBehaviour
     }
 
     void OnWall(){
+        on_wall = false;
+
         RaycastHit2D hitleft = Physics2D.BoxCast(transform.position + Vector3.left*box_left_distance, size_box_left, 0, Vector2.left, 0);
         obj_on_left = hitleft;
         if(hitleft) if(hitleft.collider.gameObject.tag == "Wall") on_wall = true;
@@ -219,8 +221,6 @@ public class PlayerMoveBasics : MonoBehaviour
         RaycastHit2D hitright = Physics2D.BoxCast(transform.position + Vector3.right*box_right_distance, size_box_right, 0, Vector2.right, 0);
         obj_on_right = hitright;
         if(hitright) if(hitright.collider.gameObject.tag == "Wall") on_wall = true;
-
-        if(!obj_on_left && !obj_on_right) on_wall = false;
     }
 
     private void OnDrawGizmos(){

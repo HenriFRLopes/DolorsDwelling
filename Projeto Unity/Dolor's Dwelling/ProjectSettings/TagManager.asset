@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ground
   - GameControl
+  - Wall
   layers:
   - Default
   - TransparentFX
